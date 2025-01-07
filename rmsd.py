@@ -241,7 +241,7 @@ class TightRMSD:
             # calculate distances with assigned atoms in molecule 1 for reference
             # shape (num_assigned_atoms x num_possibly_equivalent_atoms)
             d_ref = np.linalg.norm(matched_coords1 - mol1.coords[atom], axis=-1, keepdims=True)
-            d_ref = np.repeat(d_ref, repeats=len(eqs), axis=-1)
+            d_ref = np.repeat(d_ref, repeats=len(eq_atoms), axis=-1)
 
             # calculate distances with assigned atoms in molecule 2
             # shape (num_assigned_atoms x num_possibly_equivalent_atoms)
