@@ -11,8 +11,17 @@ class TightRMSD:
         pass
 
 
-    def calc(self, file1: str, file2: str) -> float:
-
+    def calc(
+        self,
+        coords1: np.array,
+        coords2: np.array,
+        file1: str=None,
+        file2: str=None,
+        elems1: list=None,
+        elems2: list=None,
+        atomic_numbers1: np.array=None,
+        atomic_numbers2: np.array=None,
+    ) -> float:
         '''
         Compute tight RMSD of two XYZ files
 
@@ -22,11 +31,27 @@ class TightRMSD:
         Returns:
             rmsd, float: Tight RMSD
         '''
-
-        # compute molecular graphs
-        mol1 = Structure(file1)
-        mol2 = Structure(file2)
-
+        
+        # safety checks and compute molecular graphs
+        mol1 = Structure()
+        mol2 = Structure()
+        if file1 is not None and file2 is not None:
+            mol1.set_structure_from_xyz_file(file1)
+            mol2.set_structure_from_xyz_file(file2)
+        elif elems1 is not None and elems2 is not None:
+            mol1.set_structure(elems=elems1, coords=coords1)
+            mol2.set_structure(elems=elems2, coords=coords2)
+        elif atomic_numbers1 is not None and atomic_numbers2 is not None:
+            mol1.set_structure(atomic_numbers=atomic_numbers1, coords=coords1)
+            mol2.set_structure(atomic_numbers=atomic_numbers2, coords=coords2)
+        else:
+            print()
+            print("********* ERROR ***********")
+            print("RMSD MODULE: Invalid input.")
+            print("***************************")
+            print()
+            return
+        
         # reorder coordinates of second molecule to assign matching atom pairs
         coords1, coords2 = self.__match_coords(mol1, mol2)
 
@@ -35,7 +60,7 @@ class TightRMSD:
         coords2 = np.dot(coords2, Rmat)
 
         # calculate RMSD
-        rmsd = np.sqrt(np.mean(np.linalg.norm(coords1 - coords2, axis=1)**2))
+        rmsd = float(np.sqrt(np.mean(np.linalg.norm(coords1 - coords2, axis=1)**2)))
 
         return rmsd
 
