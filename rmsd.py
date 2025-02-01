@@ -2,6 +2,7 @@ import numpy as np
 
 from queue import Queue
 from PyTightRMSD.structure import Structure
+from typing import Optional
 
 
 
@@ -15,12 +16,12 @@ class TightRMSD:
         self,
         coords1: np.array,
         coords2: np.array,
-        file1: str=None,
-        file2: str=None,
-        elems1: list=None,
-        elems2: list=None,
-        atomic_numbers1: np.array=None,
-        atomic_numbers2: np.array=None,
+        file1: Optional[str]=None,
+        file2: Optional[str]=None,
+        elems1: Optional[list]=None,
+        elems2: Optional[list]=None,
+        atomic_numbers1: Optional[np.array]=None,
+        atomic_numbers2: Optional[np.array]=None,
     ) -> float:
         '''
         Compute tight RMSD of two XYZ files

@@ -2,23 +2,8 @@ import os
 
 import numpy as np
 
-
-
-# P. Pyykkö, M. Atsumi,Chemistry – A European Journal2009,15, 186–197
-covalence_radii_single_bond = {
-    "H": 0.32,
-    "B": 0.85, "C": 0.75, "N": 0.71, "O": 0.66, "F": 0.64, 
-    "S": 1.03, "P": 1.11, "Cl": 0.99, 
-    "Br": 1.14, 
-    "I": 1.33
-}
-
-
-element_symbols = {
-    1: "H", 2: "He",
-    3: "Li", 4: "Be", 5: "B", 6: "C", 7: "N", 8: "O", 9: "F", 10: "Ne",
-    15: "P"
-}
+from PyTightRMSD.chemdata import element_symbols, covalence_radii_single_bond, valences
+from typing import Optional
 
 
 
@@ -31,7 +16,12 @@ class Structure:
         self.bond_dict = None
     
 
-    def set_structure(self, coords: np.array, elems: list=None, atomic_numbers: np.array=None) -> None:
+    def set_structure(
+        self,
+        coords: np.array,
+        elems: Optional[list]=None,
+        atomic_numbers: Optional[np.array]=None
+    ) -> None:
         """
         Initialize structure from arrays
 
@@ -111,7 +101,18 @@ class Structure:
                 if bond:
                     self.bond_dict[i].append(j)
                     self.bond_dict[j].append(i)
-    
+            # structure seems to be non-minimum structure (interatomic distances don't comply to covalence radii)
+            # determine bonds based on typical valences
+            if len(self.bond_dict[i]) == 0:
+                distances = [np.linalg.norm(self.coords[i] - self.coords[j]) for j in range(self.num_atoms)]
+                distances[i] = 100000
+                for j in range(valences[self.elems[i]]):
+                    idx_min = np.argmin(distances)
+                    self.bond_dict[i].append(idx_min)
+                    self.bond_dict[idx_min].append(i)
+                    distances[idx_min] = 100000
+
+
 
     def __check_for_bond(self, elem1: str, coord1: np.array, elem2: str, coord2: np.array) -> bool:
         """
