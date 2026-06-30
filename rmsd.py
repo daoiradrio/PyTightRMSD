@@ -226,11 +226,13 @@ class TightRMSD:
 
             # if not at least one equivalent atom something must be off
             else:
+                '''
                 print()
                 print("***************** WARNING ******************")
                 print("RMSD MODULE: Molecules seem to be different.")
                 print("********************************************")
                 print()
+                '''
                 return mol1.coords, mol2.coords
 
         # symmetric case where no atom pair can be assigned based on first two criteria

@@ -65,11 +65,13 @@ class Structure:
         
         # safety check
         if not os.path.isfile(filepath):
+            '''
             print()
             print("******************* ERROR *********************")
             print("STRUCTURE MODULE: File not found at given path.")
             print("***********************************************")
             print()
+            '''
             return
         
         # read XYZ information
